@@ -15,11 +15,63 @@
 # limitations under the License.
 #
 import webapp2
+import cgi
+import jinja2
+import os
+#set up google db
+from google.appengine.ext import db
 
-class MainHandler(webapp2.RequestHandler):
+s = cgi.escape( """& < >""" )
+
+# set up jinja
+template_dir = os.path.join(os.path.dirname(__file__), "templates")
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
+
+#Displays the five most recent posts (use filtering)
+
+class blogposts(db.Model):
+    title = db.StringProperty(required = True)
+    body = db.TextProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+
+    #def render(self):
+
+class MainPage(webapp2.RequestHandler):
+        def get(self):
+            blogposts = db.GqlQuery("SELECT * FROM blogposts LIMIT 5")
+            t = jinja_env.get_template("mainpage.html")
+            content = t.render(blogposts = blogposts)
+            self.response.write(content)
+
+class ViewPost(webapp2.RequestHandler):
+    def get(self, id):
+        blogposts = (blogposts.get_by_id)
+
+    #if not post:
+    #    error = "No post found"
+    #    self.write(error)
+
+class NewPost(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello world!')
+        t = jinja_env.get_template("newpost.html")
+        content = t.render()
+        self.response.write(content)
+    def post(self):
+        title = self.request.get("title")
+        body = self.request.get("body")
+
+        if title and body:
+            b = blogposts(title = title, body = body)
+            b.put()
+            self.redirect('/blog')
+        else:
+            self.renderError(400)
+            return
+
+            self.render("newpost.html", title = title, content = content, error = error)
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/blog', MainPage),
+    ('/blog/newpost', NewPost),
+    ('/blog/<id:\d+>', ViewPost)
 ], debug=True)
