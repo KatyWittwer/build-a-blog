@@ -25,53 +25,63 @@ s = cgi.escape( """& < >""" )
 
 # set up jinja
 template_dir = os.path.join(os.path.dirname(__file__), "templates")
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
+                                autoescape = True)
 
-#Displays the five most recent posts (use filtering)
+class Handler(webapp2.RequestHandler):
+    def write(self, *a, **kw):
+        self.response.write(*a, **kw)
 
-class blogposts(db.Model):
+    def render_str(self, template, **params):
+        t = jinja_env.get_template(template)
+        return t.render(params)
+
+    def render(self, template, **kw):
+        self.write(self.render_str(template, **kw))
+
+class Posts(db.Model):
     title = db.StringProperty(required = True)
     body = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
 
     #def render(self):
-
-class MainPage(webapp2.RequestHandler):
-        def get(self):
-            blogposts = db.GqlQuery("SELECT * FROM blogposts LIMIT 5")
-            t = jinja_env.get_template("mainpage.html")
-            content = t.render(blogposts = blogposts)
-            self.response.write(content)
-
-class ViewPost(webapp2.RequestHandler):
-    def get(self, id):
-        blogposts = (blogposts.get_by_id)
-
-    #if not post:
-    #    error = "No post found"
-    #    self.write(error)
-
-class NewPost(webapp2.RequestHandler):
+class Mainhandler(Handler):
     def get(self):
-        t = jinja_env.get_template("newpost.html")
-        content = t.render()
-        self.response.write(content)
+        self.redirect('/blog')
+
+class MainPage(Handler):
+        def get(self):
+            p = db.GqlQuery("SELECT * FROM Posts LIMIT 5")
+            self.render("mainpage.html", p = p)
+
+class ViewPost(Handler):
+    def get(self, id):
+        blog_post = Posts.get_by_id(int(id))
+        self.render("viewpost.html", blog_post = blog_post)
+
+        if not blog_post:
+            error = "No post found by that id number"
+            self.render(error)
+
+class NewPost(Handler):
+    def get(self):
+        self.render("newpost.html")
+
     def post(self):
         title = self.request.get("title")
         body = self.request.get("body")
 
         if title and body:
-            b = blogposts(title = title, body = body)
-            b.put()
-            self.redirect('/blog')
+            p = Posts(title = title, body = body)
+            p.put()
+            self.redirect('/')
         else:
-            self.renderError(400)
-            return
-
+            error = "Submit a post with a title and body, please!"
             self.render("newpost.html", title = title, content = content, error = error)
 
 app = webapp2.WSGIApplication([
+    ('/', Mainhandler),
     ('/blog', MainPage),
     ('/blog/newpost', NewPost),
-    ('/blog/<id:\d+>', ViewPost)
+    webapp2.Route('/blog/<id:\d+>', ViewPost),
 ], debug=True)
