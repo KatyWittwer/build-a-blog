@@ -51,8 +51,8 @@ class Mainhandler(Handler):
 
 class MainPage(Handler):
         def get(self):
-            p = db.GqlQuery("SELECT * FROM Posts LIMIT 5")
-            self.render("mainpage.html", p = p)
+            blog_post = db.GqlQuery("SELECT * FROM Posts LIMIT 5")
+            self.render("mainpage.html")
 
 class ViewPost(Handler):
     def get(self, id):
@@ -74,10 +74,11 @@ class NewPost(Handler):
         if title and body:
             p = Posts(title = title, body = body)
             p.put()
-            self.redirect('/')
+            self.redirect('/blog/%s' % str(p.key().id()))
+
         else:
             error = "Submit a post with a title and body, please!"
-            self.render("newpost.html", title = title, content = content, error = error)
+            self.render("newpost.html", title = title, body = body, error = error)
 
 app = webapp2.WSGIApplication([
     ('/', Mainhandler),
