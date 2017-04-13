@@ -3,17 +3,15 @@
 {% block content %}
 
 <h2>New Blog Post</h2>
-<form method="post" action="">
+<form method="post">
     <label>
         <div>Title</div>
-        <input type="text" name="title">
+        <input type="text" name="title" value="{{title}}" />
     </label>
-
-    <div class="error">{{title_error}}</div>
 
     <label>
         <div>Body</div>
-        <textarea name="body"></textarea>
+        <textarea name="body">{{body}}</textarea>
     </label>
 
     <div class="error">{{error}}</div>

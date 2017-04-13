@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>{{post.title}}</div>
-    <div>{{post.body}}</div>
+
+    {{ bp.render() }}
+
 {% endblock %}

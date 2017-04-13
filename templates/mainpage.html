@@ -1,10 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>LC 101 Blog Posts</h2>
-<p><a href="post.key().id()">New Post 1</a></p>
-<p><a href="post.key().id()">New Post 2</a></p>
-<p><a href="post.key().id()">New Post 3</a></p>
-<p><a href="post.key().id()">New Post 4</a></p>
-<p><a href="post.key().id()">New Post 5</a></p>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LC101 Blog</title>
+</head>
+  <div id="content">
+    {% for post in posts %}
+    <div class="post">
+        <div class="post-title">{{post.title}}</div>
+        <div class="post-date">{{post.created}}</div>
+        <pre class="post-body">{{post.body}}</pre>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
 {% endblock %}
