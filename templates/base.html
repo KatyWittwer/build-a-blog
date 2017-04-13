@@ -5,59 +5,58 @@
     </head>
 
     <style type="text/css">
-        body {
-            font-family: sans-serif;
-            width: 800px;
-            margin: 0 auto;
-            padding: 10px;
-        }
+            body {
+                font-family: sans-serif;
+                width: 800px;
+                margin: 0 auto;
+                padding: 10px;
+            }
 
-        .error {
-            color: red
-        }
+            .error {
+                color: red;
+            }
 
-        label {
-            display: block;
-            font-size: 20px;
-        }
+            label {
+                display: block;
+                font-size: 20px;
+            }
 
-        input[type=text] {
-            width: 400px;
-            font-size: 20px;
-            padding: 2px;
-        }
+            input[type=text] {
+                width: 400px;
+                font-size: 20px;
+                padding: 2px;
+            }
 
-        textarea {
-            width: 400px;
-            height: 200px;
-            font-size: 17px;
-            font-family: monospace;
-        }
+            textarea {
+                width: 400px;
+                height: 200px;
+                font-size: 17px;
+                font-family: monospace;
+            }
 
-        input[type=submit] {
-            font-size: 24px;
-        }
+            input[type=submit] {
+                font-size: 24px;
+            }
 
-        hr {
-            margin: 20px auto;
-        }
+            hr {
+                margin: 20px auto;
+            }
 
-        .blog + .blog {
-            margin-top: 20px;
-        }
+            .post-title {
+                font-weight: bold;
+                font-size: 20px;
+            }
 
-        .blog-title {
-            font-weight: bold;
-            font-size: 20px;
-        }
+            .post-body {
+                margin: 0;
+                font-size: 17px;
+            }
 
-        .blog-body {
-            margin: 0;
-            font-size: 17px;
-        }
-    </style>
+        </style>
     <a href="http://localhost:8080/">Home</a>
     <a href='http://localhost:8080/blog/newpost'>Create New Post</a>
+    <a href='http://www.launchcode.org'>About LaunchCode</a>
+
     <body>
 
         {% block content %}
